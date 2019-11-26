@@ -53,24 +53,20 @@ class TableValid extends FormBase
         $form_state->set('table_number', $table_number);
 
         $form_state->setRebuild();
-
     }
 
     // Метод добавлення рядка
     public function addRow(array &$form, FormStateInterface $form_state)
     {
-//        $table = $form_state->getTriggeringElement();
-//        $table = $table['#post'];
-        $table = trim(substr($_POST['op'], 8));
+        $triggering_element = $form_state->getTriggeringElement();
+        $table = $triggering_element['#post'];
+//        $table = trim(substr($_POST['op'], 8));
 
         $row_number = $form_state->get('row_number');
         $row_number[$table]++;
 
         $form_state->set('row_number', $row_number);
         $form_state->setRebuild();
-
-        dump($_POST);
-        dump($form_state);
     }
 
     public function buildForm(array $form, FormStateInterface $form_state)
@@ -88,6 +84,7 @@ class TableValid extends FormBase
             $form_state->set('row_number', $row_number);
         }
 
+
         for ($j = 1; $j <= $table_number; $j++) {
 
 
@@ -96,7 +93,7 @@ class TableValid extends FormBase
             // Рендер кнопки Add Year
             $form['add_row_' . $table] = [
                 '#type' => 'submit',
-                '#value' => $this->t('Add Year             ' . $table),
+                '#value' => $this->t('Add Year       ' . $table),
                 '#submit' => ['::addRow'],
                 '#post' => $table,
                 '#attributes' => ['class' => ['button-add-row']],
@@ -133,13 +130,9 @@ class TableValid extends FormBase
             $id_row = $row_number[$table] + 1;
 
             //Добавлення рядків
-//            for ($row = 1; $row <= $row_number[$table]; $row++) {
             for ($row = $row_number[$table]; $row > 0; $row--) {
 
                 $year = date('Y') + 1;
-
-                $id_row = $id_row - 1;
-
 
                 $form[$table][$row]['Year'] = [
                     '#type' => 'html_tag',
@@ -151,51 +144,49 @@ class TableValid extends FormBase
 
                 for ($cell = 1; $cell <= count($table_cell_name); $cell++) {
 
-//                    $id_cell = $table . '[' . ($id_row). '][' . $cell . ']';
-
-
-                    $id_cell = $j . '-' . $id_row . '-' . $cell;
-
+                    $id_cell = $j . '_' . $row . '_' . $cell;
 
                     if ($cell % 4 == 0) {
                         $form[$table][$row][$table_cell_name[$cell]] = [
-                            '#type' => 'number',
+                            '#type' => 'textfield',
+                            '#id' => $id_cell,
                             '#attributes' => ['class' => ['quarter'],],
                             '#disabled' => TRUE,
-//                            '#id' => $id_cell,
-//                            '#name' => $id_cell,
+//                            '#default_value' => '',
+//                            '#ajax' => [
+//                                'callback' => '::ajaxUpdateForm',
+//                                'onchange' => "Sum(this)",
+//                            ],
+
+
                         ];
                     } else {
                         $form[$table][$row][$table_cell_name[$cell]] = [
-                            '#type' => 'number',
-                            '#attributes' => ['class' => ['table-head']],
-                            '#values' => [$table => [$row_number]],
-//                            '#id' => $id_cell,
-//                            '#name' => $id_cell,
+                            '#type' => 'textfield',
+//                            '#type' => 'number',
+                            '#id' => $id_cell,
+                            '#attributes' => [
+                                'class' => ['table-head'],
+                                'onchange' => "Sum(this)",
+                            ],
+//                            '#ajax' => [
+//                                'callback' => '::ajaxUpdateForm',
+
+//                            ],
                         ];
                     }
-
-//                    https://zamula.uacoders.com/ru/blog/mnogoshagovye-multistep-formy-na-ajax-v-drupal-7
-//
-//                    $default_value = empty($form_state['values']['step2']['module']) ? '' : $form_state['values']['step2']['module'];
-//
-//                    if (isset($form_state->getValue(['values'][$table][$row]))) {
-//                        dump($form_state['values'][$table][$row]);
-//                        $form['step1']['age']['#default_value'] = $form_state['values']['step1']['age'];
-//                    }
-
-
                 }
+                $id_ytd = $j . '_' . $row . '_' . $cell;
 
                 $form[$table][$row]['YTD'] = [
                     '#type' => 'number',
+                    '#id' => $id_ytd,
                     '#attributes' => ['class' => ['quarter']],
                     '#disabled' => TRUE,
                 ];
             }
 
         }
-
 
         $form['actions']['add_table'] = [
             '#type' => 'submit',
@@ -206,32 +197,58 @@ class TableValid extends FormBase
 
         $form['actions']['send'] = [
             '#type' => 'submit',
-            '#value' => $this->t('Send'),
+            '#value' => $this->t('Submit'),
         ];
 
-        return $form;
 
+        return $form;
     }
 
 
-
-    // ф-я валидации
-    /*
-      public function validateForm(array &$form, FormStateInterface $form_state) {
-
-        if (strlen($form_state->getValue('name')) < 5) {
-          $form_state->setErrorByName('name', $this->t('Name is too short.'));
-        }
-      }*/
+//     ф-я валидации
+//
+//    public function validateForm(array &$form, FormStateInterface $form_state)
+//    {
+//        if (strlen($form_state->getValue('name')) < 5) {
+//            $form_state->setErrorByName('name', $this->t('Name is too short.'));
+//        }
+//    }
 
 
 // действия по сабмиту
     public function submitForm(array &$form, FormStateInterface $form_state)
     {
-        drupal_set_message($this->t('Thank you @name, your phone number is @number', [
-            '@name' => $form_state->getValue('name'),
-            '@number' => $form_state->getValue('phone_number'),
-        ]));
+        // Перевіряємо чи була відправлена форма
+        if ($_POST['op'] == 'Submit') {
+
+            //Отримуємо кількість таблиць
+            $table_number = $form_state->get('table_number');
+
+            $cell_valid_number = [1,2,3, 5,6,7, 9,10,11]
+
+            // Записуємо таблиці із дамини в масив
+            for ($i = 1; $i <= $table_number; $i++) {
+                $table_name = 'table_' . $i;
+
+                $table_index = substr($table_name, 6);
+
+                $all_tables[$table_index] = $form_state->getValue($table_name);
+                
+                    if ('' != $all_tables[1][1][1] & $all_tables[1][1][2] ) {
+                        drupal_set_message($this->t('Valid!'));
+                    }
+                    else {
+                        drupal_set_message($this->t('Invalid!'));
+                    }
+
+
+            }
+            kint($all_tables);
+
+//            $form_state->setErrorByName('name', $this->t('Name is too short.'));
+        }
+
+        $form_state->disableRedirect();
     }
 
 }
