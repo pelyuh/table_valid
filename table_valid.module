@@ -1,0 +1,10 @@
+<?php
+/**
+ * Implements hook_page_attachments().
+ */
+function table_valid_page_attachments(array &$attachments)
+{
+    $attachments['#attached']['library'][] = 'table_valid/custom';
+}
+
+

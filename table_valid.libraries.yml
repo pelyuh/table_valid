@@ -1,0 +1,8 @@
+custom:
+  version: 1.0
+  css:
+    theme:
+      css/table_valid_css.css: {}
+
+  js:
+    js/custom_js.js: {}

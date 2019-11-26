@@ -1,0 +1,7 @@
+table_valid.example_form:
+  path: '/table-valid'
+  defaults:
+    _title: 'Form validator'
+    _form:  '\Drupal\table_valid\Form\TableValid'
+  requirements:
+    _permission: 'access content'
