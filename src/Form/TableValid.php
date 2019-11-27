@@ -4,6 +4,8 @@ namespace Drupal\table_valid\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\InvokeCommand;
 
 class TableValid extends FormBase
 {
@@ -155,7 +157,6 @@ class TableValid extends FormBase
 //                            '#default_value' => '',
 //                            '#ajax' => [
 //                                'callback' => '::ajaxUpdateForm',
-//                                'onchange' => "Sum(this)",
 //                            ],
 
 
@@ -163,15 +164,14 @@ class TableValid extends FormBase
                     } else {
                         $form[$table][$row][$table_cell_name[$cell]] = [
                             '#type' => 'textfield',
-//                            '#type' => 'number',
                             '#id' => $id_cell,
                             '#attributes' => [
                                 'class' => ['table-head'],
                                 'onchange' => "Sum(this)",
                             ],
 //                            '#ajax' => [
-//                                'callback' => '::ajaxUpdateForm',
-
+//                                'callback' => '::myAjaxCalc',
+//                                'event' => 'change',
 //                            ],
                         ];
                     }
@@ -191,7 +191,8 @@ class TableValid extends FormBase
         $form['actions']['add_table'] = [
             '#type' => 'submit',
             '#value' => $this->t('Add table'),
-            '#submit' => ['::addTable'],
+//            '#submit' => ['::addTable'],
+            '#submit' => ['::myAjaxCalc'],
         ];
 
 
@@ -224,7 +225,7 @@ class TableValid extends FormBase
             //Отримуємо кількість таблиць
             $table_number = $form_state->get('table_number');
 
-            $cell_valid_number = [1,2,3, 5,6,7, 9,10,11]
+            $cell_valid_number = [1, 2, 3, 5, 6, 7, 9, 10, 11];
 
             // Записуємо таблиці із дамини в масив
             for ($i = 1; $i <= $table_number; $i++) {
@@ -233,17 +234,17 @@ class TableValid extends FormBase
                 $table_index = substr($table_name, 6);
 
                 $all_tables[$table_index] = $form_state->getValue($table_name);
-                
-                    if ('' != $all_tables[1][1][1] & $all_tables[1][1][2] ) {
-                        drupal_set_message($this->t('Valid!'));
-                    }
-                    else {
-                        drupal_set_message($this->t('Invalid!'));
-                    }
+
+//                for ($id_row = 1; $id_row < )
+                if ('' != $all_tables[$i][1][1] & $all_tables[1][1][2]) {
+                    drupal_set_message($this->t('Valid!'));
+                } else {
+                    drupal_set_message($this->t('Invalid!'));
+                }
 
 
             }
-            kint($all_tables);
+            dump($all_tables);
 
 //            $form_state->setErrorByName('name', $this->t('Name is too short.'));
         }
