@@ -279,57 +279,126 @@ class TableValid extends FormBase
         return $sum;
     }
 
-
-    public function submitForm(array &$form, FormStateInterface $form_state)
+    public function validateForm(array &$form, FormStateInterface $form_state)
     {
-        // Перевіряємо чи була відправлена форма
         if ($_POST['op'] == 'Submit') {
 
+            $error_list = [];
+
             //Отримуємо кількість таблиць
-            $table_count = $form_state->get('table_number');
+//            $table_count = $form_state->get('table_number');
+            $table_count = 1;
 
             //Отримуємо кількість рядків в таблицях
             $row_number = $form_state->get('row_number');
 
-            for ($table_num = 1; $table_num <= $table_count; $table_num++) {
-                $row_count = $row_number['table_' . $table_num];
-                for ($row_num = 1; $row_num <= $row_count; $row_num++) {
-                    for ($i = 0; $i <= 4; $i++) {
-                        $quarter1 = $table_num . '_' . $row_num . '_' . 4;
-                        $quarter2 = $table_num . '_' . $row_num . '_' . 8;
-                        $quarter3 = $table_num . '_' . $row_num . '_' . 12;
-                        $quarter4 = $table_num . '_' . $row_num . '_' . 16;
-                        if ($_POST[$quarter1] != ' ' && $_POST[$quarter2] == ' ' && $_POST[$quarter3] == ' ' && $_POST[$quarter4] == ' ') {
+            $row_count = $row_number['table_1'];
 
-                            drupal_set_message($this->t('Valid! Q1'));
+            for ($row_count; $row_count > 0; $row_count--) {
 
-                        } else {
+                $cell_index_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
+                // Пошук в першому рядку клітинки із значенням
+                if (empty($cell_id)) {
 
-//                            drupal_set_message($this->t('Invalid!'));
-                            $form_state->setErrorByName('name', $this->t('Invalid'));
+                    for ($t = 0; $t < count($cell_index_1); $t++) {
 
+
+                        $first_cell_id = 1 . '_' . $row_count . '_' . array_shift($cell_index_1);
+                        if ($_POST[$first_cell_id] != '') {
+
+
+                            $first_cell_id = explode('_', $first_cell_id);
+
+                            for ($i = $first_cell_id[2]; $i < 14; $i++) {
+                                if (!($i % 4 == 0)) {
+                                    $first_cell_id = 1 . '_' . $row_count . '_' . $i;
+                                    if ($_POST[$first_cell_id] != 0) {
+                                        $index_is_cell = explode('_', $first_cell_id);
+                                        if (in_array($index_is_cell[2], [5, 6, 7])) {
+
+                                            $cell_arr[] = $index_is_cell[2] - 1;
+
+                                        } elseif (in_array($index_is_cell[2], [9, 10, 11])) {
+
+                                            $cell_arr[] = (int)$index_is_cell[2] - 2;
+
+                                        } elseif (in_array($index_is_cell[2], [13, 14, 15])) {
+
+                                            $cell_arr[] = (int)$index_is_cell[2] - 3;
+
+                                        } else {
+
+                                            $cell_arr[] = (int)$index_is_cell[2];
+
+                                        }
+
+                                    }
+                                }
+                            }
+
+
+                            if (count($cell_arr) != 1) {
+
+                                $cheking = [];
+                                $iterator = 1;
+
+                                for ($i = 0; $i < count($cell_arr); $i++) {
+
+                                    if ($cell_arr[$i] == $iterator) {
+                                        $cheking[] = 1;
+                                    } else {
+                                        $cheking[] = 0;
+                                    }
+                                    $iterator++;
+                                }
+
+                                if (in_array(0, $cheking)) {
+                                    $form_state->set('valid_result', FALSE);
+                                } else {
+                                    $form_state->set('valid_result', TRUE);
+                                }
+                            }
+
+//                            dump($cheking);
+//                            dump($row_arr);
+                            break;
                         }
-                    }
 
+
+//                        if ($_POST[$first_cell_id] != '') {
+//                            $first_cell_id = explode('_', $first_cell_id);
+//                            $cell_id = $first_cell_id[2];
+//
+//                            $cell_index_2 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
+//                            if ($first_cell_id[2] <= 3) {
+//                                $cell_index_2 = array_splice($cell_index_2, $first_cell_id[2]);
+//                            }
+//
+//                            for ($z = 0; $z < count($cell_index_2); $z++) {
+//                                ${'cell' . $z} = 1 . '_' . $row_count . '_' . array_shift($cell_index_2);
+//                            }
+//
+//
+//                        }
+                    }
                 }
             }
 
-            //Отримуємо кількість таблиць
-
-
-//                if ('' != $all_data[$i][1][1] & $all_data[1][1][2]) {
-//                    drupal_set_message($this->t('Valid!'));
-//                } else {
-//                    drupal_set_message($this->t('Invalid!'));
-//                }
-
 
         }
-
-//            $form_state->setErrorByName('name', $this->t('Name is too short.'));
-
-
-        $form_state->disableRedirect();
     }
+
+    public function submitForm(array &$form, FormStateInterface $form_state)
+    {
+        // Перевіряємо чи була відправлена форма
+
+        if ($form_state->get('valid_result')) {
+            drupal_set_message($this->t('Valid!'));
+        } else {
+            drupal_set_message($this->t('Not valid!'), 'error');
+        }
+        $form_state->setRebuild();
+    }
+
 
 }
