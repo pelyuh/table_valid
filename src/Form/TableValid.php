@@ -284,83 +284,217 @@ class TableValid extends FormBase
 
             $row_count = $row_number['table_1'];
 
-            // Валідація комірок
+            // Валідація в2
+
             for ($row_count; $row_count > 0; $row_count--) {
 
                 $cell_index_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
 
                 // Пошук та валідація в першому рядку таблиці клітинки із значеннями
-                if (empty($cell_id)) {
+//                if (empty($cell_id)) {
 
-                    for ($t = 0; $t < 12; $t++) {
+                for ($t = 0; $t < 12; $t++) {
 
-                        $first_cell_id = 1 . '_' . $row_count . '_' . array_shift($cell_index_1);
-                        if ($_POST[$first_cell_id] != '') {
+                    $first_cell_id = 1 . '_' . $row_count . '_' . array_shift($cell_index_1);
+
+                    // Знахлдим першу не песту клітинку
+                    if ($_POST[$first_cell_id] != '') {
+
+                        $first_cell = $first_cell_id;
+                        $first_cell_id = explode('_', $first_cell);
 
 
-                            $first_cell_id = explode('_', $first_cell_id);
+                        if ($first_cell_id[2] == 1) {
 
-                            for ($i = $first_cell_id[2]; $i < 16; $i++) {
-                                if (!($i % 4 == 0)) {
-                                    $first_cell_id = 1 . '_' . $row_count . '_' . $i;
-                                    if ($_POST[$first_cell_id] != 0) {
-                                        $index_is_cell = explode('_', $first_cell_id);
-                                        if (in_array($index_is_cell[2], [5, 6, 7])) {
+                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 2;
+                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 3;
 
-                                            $cell_array[] = $index_is_cell[2] - 1;
-
-                                        } elseif (in_array($index_is_cell[2], [9, 10, 11])) {
-
-                                            $cell_array[] = (int)$index_is_cell[2] - 2;
-
-                                        } elseif (in_array($index_is_cell[2], [13, 14, 15])) {
-
-                                            $cell_array[] = (int)$index_is_cell[2] - 3;
-
-                                        } else {
-
-                                            $cell_array[] = (int)$index_is_cell[2];
-
-                                        }
-                                    }
-                                }
+                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
+                                $error_list['line'] = 0;
                             }
+                        } elseif ($first_cell_id[2] == 2) {
 
-                            $cell_array_count = count($cell_array);
-                            if ($cell_array_count != 1) {
+                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 3;
+                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 5;
 
-                                $first_line_log = [];
-                                $iterator = $cell_array[0];
+                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
+                                $error_list['line'] = 0;
+                            }
+                        } elseif ($first_cell_id[2] == 3) {
 
-                                for ($i = 0; $i < count($cell_array); $i++) {
+                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 5;
+                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 6;
 
-                                    if ($cell_array[$i] == $iterator) {
-                                        $first_line_log[] = 1;
-                                    } else {
-                                        $first_line_log[] = 0;
-                                    }
-                                    $iterator++;
+                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
+                                $error_list['line'] = 0;
+                            }
+                        } elseif ($first_cell_id[2] == 5) {
+
+                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 6;
+                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 7;
+
+                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
+                                $error_list['line'] = 0;
+                            }
+                        } elseif ($first_cell_id[2] == 6) {
+
+                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 7;
+                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 9;
+
+                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
+                                $error_list['line'] = 0;
+                            }
+                        } elseif ($first_cell_id[2] == 7) {
+
+                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 9;
+                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 10;
+
+                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
+                                $error_list['line'] = 0;
+                            }
+                        } elseif ($first_cell_id[2] == 9) {
+
+                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 10;
+                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 11;
+
+                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
+                                $error_list['line'] = 0;
+                            }
+                        } elseif ($first_cell_id[2] == 10) {
+
+                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 10;
+                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 13;
+
+                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
+                                $error_list['line'] = 0;
+                            }
+                        } elseif ($first_cell_id[2] == 11) {
+
+                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 13;
+                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 14;
+
+                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
+                                $error_list['line'] = 0;
+                            }
+                        } elseif ($first_cell_id[2] == 13) {
+
+                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 14;
+                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 15;
+
+                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
+                                $error_list['line'] = 0;
+                            }
+                        } elseif ($first_cell_id[2] == 14) {
+
+                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 15;
+                            $next_row_count = $row_count - 1;
+                            $next_cell_id_2 = 1 . '_' . $next_row_count . '_' . 1;
+                            $next_cell_id_3 = 1 . '_' . $next_row_count . '_' . 2;
+                            $next_cell_id_4 = 1 . '_' . $next_row_count . '_' . 3;
+                            $next_cell_id_5 = 1 . '_' . $next_row_count . '_' . 5;
+                            $next_cell_id_6 = 1 . '_' . $next_row_count . '_' . 6;
+                            $next_cell_id_7 = 1 . '_' . $next_row_count . '_' . 7;
+                            $next_cell_id_8 = 1 . '_' . $next_row_count . '_' . 9;
+                            $next_cell_id_9 = 1 . '_' . $next_row_count . '_' . 10;
+                            $next_cell_id_10 = 1 . '_' . $next_row_count . '_' . 11;
+                            $next_cell_id_11 = 1 . '_' . $next_row_count . '_' . 13;
+                            $next_cell_id_12 = 1 . '_' . $next_row_count . '_' . 14;
+                            $next_cell_id_13 = 1 . '_' . $next_row_count . '_' . 15;
+
+                            if (!(empty($_POST[$next_cell_id_2]))) {
+                                if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
+                                    $error_list['line'] = 0;
                                 }
-
-                                if (in_array(0, $first_line_log)) {
-//                                    $error_list['first_line'] = 0;
-                                    $error_list['first_line'] = 1;
-                                } else {
-                                    $error_list['first_line'] = 1;
-                                }
-                            } else {
-                                $error_list['first_line'] = 1;
                             }
                         }
+
                     }
                 }
             }
 
+
+            // Валідація комірок
+//            for ($row_count; $row_count > 0; $row_count--) {
+//
+//                $cell_index_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
+//
+//                // Пошук та валідація в першому рядку таблиці клітинки із значеннями
+//                if (empty($cell_id)) {
+//
+//                    for ($t = 0; $t < 12; $t++) {
+//
+//                        $first_cell_id = 1 . '_' . $row_count . '_' . array_shift($cell_index_1);
+//                        if ($_POST[$first_cell_id] != '') {
+//
+//                            $first_cell_id = explode('_', $first_cell_id);
+//
+//                            for ($i = $first_cell_id[2]; $i < 16; $i++) {
+//                                if (!($i % 4 == 0)) {
+//                                    $first_cell_id = 1 . '_' . $row_count . '_' . $i;
+//                                    if ($_POST[$first_cell_id] != 0) {
+//                                        $index_is_cell = explode('_', $first_cell_id);
+//                                        if (in_array($index_is_cell[2], [5, 6, 7])) {
+//
+//                                            $cell_array[] = $index_is_cell[2] - 1;
+//
+//                                        } elseif (in_array($index_is_cell[2], [9, 10, 11])) {
+//
+//                                            $cell_array[] = (int)$index_is_cell[2] - 2;
+//
+//                                        } elseif (in_array($index_is_cell[2], [13, 14, 15])) {
+//
+//                                            $cell_array[] = (int)$index_is_cell[2] - 3;
+//
+//                                        } else {
+//
+//                                            $cell_array[] = (int)$index_is_cell[2];
+//
+//                                        }
+//                                    }
+//                                }
+//                            }
+//
+//                            $cell_array_count = count($cell_array);
+//                            if ($cell_array_count != 1) {
+//
+//                                $first_line_log = [];
+//                                $iterator = $cell_array[0];
+//
+//                                for ($i = 0; $i < count($cell_array); $i++) {
+//
+//                                    if ($cell_array[$i] == $iterator) {
+//                                        $first_line_log[] = 1;
+//                                    } else {
+//                                        $first_line_log[] = 0;
+//                                    }
+//                                    $iterator++;
+//                                }
+//
+//                                if (in_array(0, $first_line_log)) {
+//                                    $error_list['first_line'] = 0;
+//
+//                                } else {
+//                                    $error_list['first_line'] = 1;
+//                                }
+//                            } else {
+//                                $error_list['first_line'] = 1;
+//                            }
+//                        }
+//                        break;
+//                    }
+//                }
+//
             // Валідація таблиць
 
-//            // Вибираємо значення таблиці №1
+
+            // Валідація таблиць
+            // Вибираємо значення таблиці №1
+            $table_count = $form_state->get('table_number');
+            $row_number = $form_state->get('row_number');
             if ($table_count > 1) {
+
                 $row_count_validate = $row_number['table_1'];
+                $pattern_table = [];
 
                 for ($f = 0; $f < $row_count_validate; $f++) {
                     $cell_table_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
@@ -370,44 +504,47 @@ class TableValid extends FormBase
                         $number_cell = 1 . '_' . $row_count_validate . '_' . array_shift($cell_table_1);
                         if ($_POST[$number_cell] != '') {
                             $pattern_table[$number_cell] = $number_cell;
+
                         }
                     }
-                }
 
+                    // Вибираємо значення наступних таблиці №1
 
-                $next_table = $table_count;
+                    $next_table = $table_count;
 
-                for ($next_table; $next_table > 1; $next_table--){
-                    $next_table_number = 'table_' . $next_table;
-                    $next_row_count_validate = $row_number[$next_table_number];
+                    for ($next_table; $next_table > 1; $next_table--) {
+                        $next_table_number = 'table_' . $next_table;
+                        $next_row_count_validate = $row_number[$next_table_number];
 
-                    $fix_next_table = $next_table - 1;
+                        ${'next_table_array' . $next_table} = [];
+                        $fix_next_table = $next_table - 1;
 
-                    for ($f = 0; $f < $next_row_count_validate; $f++) {
-                        $cell_table_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
+                        for ($f = 0; $f < $next_row_count_validate; $f++) {
+                            $cell_table_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
 
-                        for ($t = 1; $t <= 12; $t++) {
-                            $cell_number =  array_shift($cell_table_1);
-                            $number_cell = $next_table. '_' . $next_row_count_validate . '_' . $cell_number;
-                            if ($_POST[$number_cell] != '') {
-                                $cell_index = $next_table - $fix_next_table. '_' . $next_row_count_validate . '_' . $cell_number;
-                                ${'next_table_array' . $next_table}[$cell_index] = $cell_index;
+                            for ($t = 1; $t <= 12; $t++) {
+                                $cell_number = array_shift($cell_table_1);
+                                $number_cell = $next_table . '_' . $next_row_count_validate . '_' . $cell_number;
+                                if ($_POST[$number_cell] != '') {
+                                    $cell_index = $next_table - $fix_next_table . '_' . $next_row_count_validate . '_' . $cell_number;
 
+                                    ${'next_table_array' . $next_table}[$cell_index] = $cell_index;
+
+                                }
+                            }
+
+                            if (count($pattern_table) < count(${'next_table_array' . $next_table})) {
+                                $result = array_diff_key(${'next_table_array' . $next_table}, $pattern_table);
+                            } else {
+                                $result = array_diff_key($pattern_table, ${'next_table_array' . $next_table});
+                            }
+
+                            if ($result) {
+                                $error_list['table_valid_' . $next_table . '_row_' . $f] = 0;
+                            } else {
+                                $error_list['table_valid_' . $next_table . '_row_' . $f] = 1;
                             }
                         }
-
-                    }
-
-                    if (count($pattern_table) < count(${'next_table_array' . $next_table})){
-                        $result = array_diff_key (${'next_table_array' . $next_table}, $pattern_table);
-                    } else {
-                        $result = array_diff_key ($pattern_table, ${'next_table_array' . $next_table});
-                    }
-
-                    if ($result) {
-                        $error_list['table_valid_' . $next_table] = 0;
-                    } else {
-                        $error_list['table_valid_' . $next_table] = 1;
                     }
                 }
             }
@@ -417,10 +554,6 @@ class TableValid extends FormBase
             } else {
                 $form_state->set('valid_result', TRUE);
             }
-
-            dump($error_list);
-
-            //END    IF
         }
     }
 
@@ -435,6 +568,4 @@ class TableValid extends FormBase
         }
         $form_state->setRebuild();
     }
-
-
 }
