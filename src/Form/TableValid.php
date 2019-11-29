@@ -288,10 +288,11 @@ class TableValid extends FormBase
             for ($row_count; $row_count > 0; $row_count--) {
 
                 $cell_index_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
-                // Пошук в першому рядку таблиці клітинки із значенням
+
+                // Пошук та валідація в першому рядку таблиці клітинки із значеннями
                 if (empty($cell_id)) {
 
-                    for ($t = 0; $t < count($cell_index_1); $t++) {
+                    for ($t = 0; $t < 12; $t++) {
 
                         $first_cell_id = 1 . '_' . $row_count . '_' . array_shift($cell_index_1);
                         if ($_POST[$first_cell_id] != '') {
@@ -358,51 +359,58 @@ class TableValid extends FormBase
             // Валідація таблиць
 
 //            // Вибираємо значення таблиці №1
+            if ($table_count > 1) {
+                $row_count_validate = $row_number['table_1'];
 
-            $row_count_validate = $row_number['table_1'];
+                for ($f = 0; $f < $row_count_validate; $f++) {
+                    $cell_table_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
 
-            for ($f = 0; $f < $row_count_validate; $f++) {
-                $cell_table_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
+                    for ($t = 1; $t <= 12; $t++) {
 
-                for ($t = 1; $t <= count($cell_table_1); $t++) {
-
-                    $number_cell = 1 . '_' . $row_count_validate . '_' . array_shift($cell_table_1);
-                    if ($_POST[$number_cell] != '') {
-                        $pattern_table[] = $number_cell;
+                        $number_cell = 1 . '_' . $row_count_validate . '_' . array_shift($cell_table_1);
+                        if ($_POST[$number_cell] != '') {
+                            $pattern_table[$number_cell] = $number_cell;
+                        }
                     }
                 }
-                dump($pattern_table);
-                dump($_POST);
+
+
+                $next_table = $table_count;
+
+                for ($next_table; $next_table > 1; $next_table--){
+                    $next_table_number = 'table_' . $next_table;
+                    $next_row_count_validate = $row_number[$next_table_number];
+
+                    $fix_next_table = $next_table - 1;
+
+                    for ($f = 0; $f < $next_row_count_validate; $f++) {
+                        $cell_table_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
+
+                        for ($t = 1; $t <= 12; $t++) {
+                            $cell_number =  array_shift($cell_table_1);
+                            $number_cell = $next_table. '_' . $next_row_count_validate . '_' . $cell_number;
+                            if ($_POST[$number_cell] != '') {
+                                $cell_index = $next_table - $fix_next_table. '_' . $next_row_count_validate . '_' . $cell_number;
+                                ${'next_table_array' . $next_table}[$cell_index] = $cell_index;
+
+                            }
+                        }
+
+                    }
+
+                    if (count($pattern_table) < count(${'next_table_array' . $next_table})){
+                        $result = array_diff_key (${'next_table_array' . $next_table}, $pattern_table);
+                    } else {
+                        $result = array_diff_key ($pattern_table, ${'next_table_array' . $next_table});
+                    }
+
+                    if ($result) {
+                        $error_list['table_valid_' . $next_table] = 0;
+                    } else {
+                        $error_list['table_valid_' . $next_table] = 1;
+                    }
+                }
             }
-
-//            if ($table_count > 1) {
-//
-//                $table_values = $form_state->getValues();
-//
-//                $table_1 = $table_values['table_1'];
-//
-//                foreach ($table_1 as $key => $value) {
-//                    foreach ($value as $k => $v) {
-//                        if ($v != '') {
-//                            $table_1[[$value][$k]];
-//                        }
-//                    }
-//                    dump($table_1);
-//                }
-//
-//                for ($tn = 2; $tn <= $table_count; $tn++) {
-//                    $table_n = 'table_' . $tn;
-//                    $table_2 = $table_values[$table_n];
-//                }
-//                $result = array_diff_assoc($table_1, $table_2);
-
-//                dump($result);
-//                if  ($result) {
-//                    $error_list['table_valid'] = 0;
-//                } else {
-//                    $error_list['table_valid'] = 1;
-//                }
-//            }
 
             if (in_array(0, $error_list)) {
                 $form_state->set('valid_result', FALSE);
@@ -410,6 +418,7 @@ class TableValid extends FormBase
                 $form_state->set('valid_result', TRUE);
             }
 
+            dump($error_list);
 
             //END    IF
         }
