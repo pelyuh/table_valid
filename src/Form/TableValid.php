@@ -389,17 +389,6 @@ class TableValid extends FormBase
                             $next_cell_id_1 = 1 . '_' . $row_count . '_' . 15;
                             $next_row_count = $row_count - 1;
                             $next_cell_id_2 = 1 . '_' . $next_row_count . '_' . 1;
-                            $next_cell_id_3 = 1 . '_' . $next_row_count . '_' . 2;
-                            $next_cell_id_4 = 1 . '_' . $next_row_count . '_' . 3;
-                            $next_cell_id_5 = 1 . '_' . $next_row_count . '_' . 5;
-                            $next_cell_id_6 = 1 . '_' . $next_row_count . '_' . 6;
-                            $next_cell_id_7 = 1 . '_' . $next_row_count . '_' . 7;
-                            $next_cell_id_8 = 1 . '_' . $next_row_count . '_' . 9;
-                            $next_cell_id_9 = 1 . '_' . $next_row_count . '_' . 10;
-                            $next_cell_id_10 = 1 . '_' . $next_row_count . '_' . 11;
-                            $next_cell_id_11 = 1 . '_' . $next_row_count . '_' . 13;
-                            $next_cell_id_12 = 1 . '_' . $next_row_count . '_' . 14;
-                            $next_cell_id_13 = 1 . '_' . $next_row_count . '_' . 15;
 
                             if (!(empty($_POST[$next_cell_id_2]))) {
                                 if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
@@ -409,6 +398,7 @@ class TableValid extends FormBase
                         }
 
                     }
+
                 }
             }
 
@@ -486,12 +476,13 @@ class TableValid extends FormBase
 //
             // Валідація таблиць
 
-
             // Валідація таблиць
             // Вибираємо значення таблиці №1
             $table_count = $form_state->get('table_number');
             $row_number = $form_state->get('row_number');
             if ($table_count > 1) {
+
+
 
                 $row_count_validate = $row_number['table_1'];
                 $pattern_table = [];
