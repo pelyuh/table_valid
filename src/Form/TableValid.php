@@ -362,7 +362,7 @@ class TableValid extends FormBase
                             }
                         } elseif ($first_cell_id[2] == 10) {
 
-                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 10;
+                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 11;
                             $next_cell_id_2 = 1 . '_' . $row_count . '_' . 13;
 
                             if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
@@ -372,8 +372,10 @@ class TableValid extends FormBase
 
                             $next_cell_id_1 = 1 . '_' . $row_count . '_' . 13;
                             $next_cell_id_2 = 1 . '_' . $row_count . '_' . 14;
+                            $next_cell_id_3 = 1 . '_' . $row_count . '_' . 15;
 
-                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
+
+                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '' or $_POST[$next_cell_id_3] == '') {
                                 $error_list['line'] = 0;
                             }
                         } elseif ($first_cell_id[2] == 13) {
