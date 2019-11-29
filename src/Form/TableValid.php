@@ -223,17 +223,7 @@ class TableValid extends FormBase
         return $form;
     }
 
-
-//     ф-я валидации
-//
-//    public function validateForm(array &$form, FormStateInterface $form_state)
-//    {
-//        if (strlen($form_state->getValue('name')) < 5) {
-//            $form_state->setErrorByName('name', $this->t('Name is too short.'));
-//        }
-//    }
-
-    public function calc(array &$form, FormStateInterface $form_state)
+    public function calc()
     {
 
         $id_cell = explode('_', $_POST['_triggering_element_name']);
@@ -285,23 +275,23 @@ class TableValid extends FormBase
 
             $error_list = [];
 
+
             //Отримуємо кількість таблиць
-//            $table_count = $form_state->get('table_number');
-            $table_count = 1;
+            $table_count = $form_state->get('table_number');
 
             //Отримуємо кількість рядків в таблицях
             $row_number = $form_state->get('row_number');
 
             $row_count = $row_number['table_1'];
 
+            // Валідація комірок
             for ($row_count; $row_count > 0; $row_count--) {
 
                 $cell_index_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
-                // Пошук в першому рядку клітинки із значенням
+                // Пошук в першому рядку таблиці клітинки із значенням
                 if (empty($cell_id)) {
 
                     for ($t = 0; $t < count($cell_index_1); $t++) {
-
 
                         $first_cell_id = 1 . '_' . $row_count . '_' . array_shift($cell_index_1);
                         if ($_POST[$first_cell_id] != '') {
@@ -309,82 +299,119 @@ class TableValid extends FormBase
 
                             $first_cell_id = explode('_', $first_cell_id);
 
-                            for ($i = $first_cell_id[2]; $i < 14; $i++) {
+                            for ($i = $first_cell_id[2]; $i < 16; $i++) {
                                 if (!($i % 4 == 0)) {
                                     $first_cell_id = 1 . '_' . $row_count . '_' . $i;
                                     if ($_POST[$first_cell_id] != 0) {
                                         $index_is_cell = explode('_', $first_cell_id);
                                         if (in_array($index_is_cell[2], [5, 6, 7])) {
 
-                                            $cell_arr[] = $index_is_cell[2] - 1;
+                                            $cell_array[] = $index_is_cell[2] - 1;
 
                                         } elseif (in_array($index_is_cell[2], [9, 10, 11])) {
 
-                                            $cell_arr[] = (int)$index_is_cell[2] - 2;
+                                            $cell_array[] = (int)$index_is_cell[2] - 2;
 
                                         } elseif (in_array($index_is_cell[2], [13, 14, 15])) {
 
-                                            $cell_arr[] = (int)$index_is_cell[2] - 3;
+                                            $cell_array[] = (int)$index_is_cell[2] - 3;
 
                                         } else {
 
-                                            $cell_arr[] = (int)$index_is_cell[2];
+                                            $cell_array[] = (int)$index_is_cell[2];
 
                                         }
-
                                     }
                                 }
                             }
 
+                            $cell_array_count = count($cell_array);
+                            if ($cell_array_count != 1) {
 
-                            if (count($cell_arr) != 1) {
+                                $first_line_log = [];
+                                $iterator = $cell_array[0];
 
-                                $cheking = [];
-                                $iterator = 1;
+                                for ($i = 0; $i < count($cell_array); $i++) {
 
-                                for ($i = 0; $i < count($cell_arr); $i++) {
-
-                                    if ($cell_arr[$i] == $iterator) {
-                                        $cheking[] = 1;
+                                    if ($cell_array[$i] == $iterator) {
+                                        $first_line_log[] = 1;
                                     } else {
-                                        $cheking[] = 0;
+                                        $first_line_log[] = 0;
                                     }
                                     $iterator++;
                                 }
 
-                                if (in_array(0, $cheking)) {
-                                    $form_state->set('valid_result', FALSE);
+                                if (in_array(0, $first_line_log)) {
+//                                    $error_list['first_line'] = 0;
+                                    $error_list['first_line'] = 1;
                                 } else {
-                                    $form_state->set('valid_result', TRUE);
+                                    $error_list['first_line'] = 1;
                                 }
+                            } else {
+                                $error_list['first_line'] = 1;
                             }
-
-//                            dump($cheking);
-//                            dump($row_arr);
-                            break;
                         }
-
-
-//                        if ($_POST[$first_cell_id] != '') {
-//                            $first_cell_id = explode('_', $first_cell_id);
-//                            $cell_id = $first_cell_id[2];
-//
-//                            $cell_index_2 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
-//                            if ($first_cell_id[2] <= 3) {
-//                                $cell_index_2 = array_splice($cell_index_2, $first_cell_id[2]);
-//                            }
-//
-//                            for ($z = 0; $z < count($cell_index_2); $z++) {
-//                                ${'cell' . $z} = 1 . '_' . $row_count . '_' . array_shift($cell_index_2);
-//                            }
-//
-//
-//                        }
                     }
                 }
             }
 
+            // Валідація таблиць
 
+//            // Вибираємо значення таблиці №1
+
+            $row_count_validate = $row_number['table_1'];
+
+            for ($f = 0; $f < $row_count_validate; $f++) {
+                $cell_table_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
+
+                for ($t = 1; $t <= count($cell_table_1); $t++) {
+
+                    $number_cell = 1 . '_' . $row_count_validate . '_' . array_shift($cell_table_1);
+                    if ($_POST[$number_cell] != '') {
+                        $pattern_table[] = $number_cell;
+                    }
+                }
+                dump($pattern_table);
+                dump($_POST);
+            }
+
+//            if ($table_count > 1) {
+//
+//                $table_values = $form_state->getValues();
+//
+//                $table_1 = $table_values['table_1'];
+//
+//                foreach ($table_1 as $key => $value) {
+//                    foreach ($value as $k => $v) {
+//                        if ($v != '') {
+//                            $table_1[[$value][$k]];
+//                        }
+//                    }
+//                    dump($table_1);
+//                }
+//
+//                for ($tn = 2; $tn <= $table_count; $tn++) {
+//                    $table_n = 'table_' . $tn;
+//                    $table_2 = $table_values[$table_n];
+//                }
+//                $result = array_diff_assoc($table_1, $table_2);
+
+//                dump($result);
+//                if  ($result) {
+//                    $error_list['table_valid'] = 0;
+//                } else {
+//                    $error_list['table_valid'] = 1;
+//                }
+//            }
+
+            if (in_array(0, $error_list)) {
+                $form_state->set('valid_result', FALSE);
+            } else {
+                $form_state->set('valid_result', TRUE);
+            }
+
+
+            //END    IF
         }
     }
 
@@ -395,7 +422,7 @@ class TableValid extends FormBase
         if ($form_state->get('valid_result')) {
             drupal_set_message($this->t('Valid!'));
         } else {
-            drupal_set_message($this->t('Not valid!'), 'error');
+            drupal_set_message($this->t('Invalid!'), 'error');
         }
         $form_state->setRebuild();
     }
