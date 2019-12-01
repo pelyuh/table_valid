@@ -286,210 +286,329 @@ class TableValid extends FormBase
 
             // Валідація в2
 
-            for ($row_count; $row_count > 0; $row_count--) {
+            if ($row_count == 1) {
 
                 $cell_index_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
-
-                // Пошук та валідація в першому рядку таблиці клітинки із значеннями
-//                if (empty($cell_id)) {
 
                 for ($t = 0; $t < 12; $t++) {
 
                     $first_cell_id = 1 . '_' . $row_count . '_' . array_shift($cell_index_1);
 
-                    // Знахлдим першу не песту клітинку
+                    // Знаходимо першу не пусту клітинку
                     if ($_POST[$first_cell_id] != '') {
 
                         $first_cell = $first_cell_id;
                         $first_cell_id = explode('_', $first_cell);
+                        break;
+                    }
+                }
+                // Визначаємо ID наступної клітинки
+                $cell_not_empty = $first_cell_id[2] + 1;
 
+                if ($cell_not_empty % 4 == 0) {
 
-                        if ($first_cell_id[2] == 1) {
+                    $cell_not_empty++;
+                }
 
-                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 2;
-                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 3;
+                $cell_not_empty_id = 1 . '_' . $row_count . '_' . $cell_not_empty;
 
-                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
-                                $error_list['line'] = 0;
+                // Перевіряємо чи наступна клітинка не пуста
+                if ($_POST[$cell_not_empty_id] != '') {
+
+                    $cell_not_empty++;
+
+                    // Перевіряємо чи решта клітинок не пусті
+                    for ($cell_not_empty; $cell_not_empty <= 15; $cell_not_empty++) {
+
+                        if ($cell_not_empty % 4 == 0) {
+
+                            $cell_not_empty++;
+                        }
+
+                        $cell_not_empty_next_id = 1 . '_' . $row_count . '_' . $cell_not_empty;
+
+                        // Якщо клітинка пуста, перевіряємо чи всі наступні не пусті
+                        if ($_POST[$cell_not_empty_next_id] != '') {
+
+                            if ($cell_not_empty == 15) {
+
+                                break;
                             }
-                        } elseif ($first_cell_id[2] == 2) {
 
-                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 3;
-                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 5;
+                            $error_list['Table_1_row_' . $row_count] = 1;
 
-                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
-                                $error_list['line'] = 0;
+                        } else {
+
+                            if ($cell_not_empty == 15) {
+
+                                break;
                             }
-                        } elseif ($first_cell_id[2] == 3) {
 
-                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 5;
-                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 6;
+                            $cell_not_empty++;
 
-                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
-                                $error_list['line'] = 0;
+                            if ($cell_not_empty % 4 == 0) {
+
+                                $cell_not_empty++;
                             }
-                        } elseif ($first_cell_id[2] == 5) {
 
-                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 6;
-                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 7;
+                            $cell_not_empty_next_id = 1 . '_' . $row_count . '_' . $cell_not_empty;
 
-                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
-                                $error_list['line'] = 0;
+                            if ($_POST[$cell_not_empty_next_id] != '') {
+                                $error_list['Table_1_row_' . $row_count] = 0;
+                                break;
                             }
-                        } elseif ($first_cell_id[2] == 6) {
+                        }
+                    }
 
-                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 7;
-                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 9;
+                } else {
+                    // Перевіряємо чи всі насупні пусті
 
-                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
-                                $error_list['line'] = 0;
+                    $cell_not_empty++;
+
+                    for ($cell_not_empty; $cell_not_empty <= 15; $cell_not_empty++) {
+
+
+                        if ($cell_not_empty % 4 == 0) {
+
+                            $cell_not_empty++;
+                        }
+
+                        $cell_not_empty_next_id = 1 . '_' . $row_count . '_' . $cell_not_empty;
+
+                        if ($_POST[$cell_not_empty_next_id] != '') {
+
+                            $error_list['Table_1_row_' . $row_count] = 0;
+                            break;
+
+                        } else {
+
+                            $error_list['Table_1_row_' . $row_count] = 1;
+                        }
+                    }
+                }
+
+                // Перевірка, якщо в таблиці два рядка
+            } elseif ($row_count == 2) {
+
+                $cell_index_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
+
+                for ($t = 0; $t < 12; $t++) {
+
+                    $first_cell_id = 1 . '_' . $row_count . '_' . array_shift($cell_index_1);
+
+                    // Знаходимо першу не пусту клітинку
+                    if ($_POST[$first_cell_id] != '') {
+
+                        $first_cell = $first_cell_id;
+                        $first_cell_id = explode('_', $first_cell);
+                        break;
+                    }
+                }
+
+                // Визначаємо ID наступної клітинки
+                $cell_not_empty = $first_cell_id[2] + 1;
+
+                if ($cell_not_empty % 4 == 0) {
+
+                    $cell_not_empty++;
+                }
+
+                $cell_not_empty_id = 1 . '_' . $row_count . '_' . $cell_not_empty;
+
+                // Перевіряємо чи наступна клітинка не пуста
+                if ($_POST[$cell_not_empty_id] != '') {
+
+                    $cell_not_empty++;
+
+                    // Перевіряємо чи решта клітинок не пусті
+                    for ($cell_not_empty; $cell_not_empty <= 15; $cell_not_empty++) {
+
+                        if ($cell_not_empty % 4 == 0) {
+
+                            $cell_not_empty++;
+                        }
+
+                        $cell_not_empty_next_id = 1 . '_' . $row_count . '_' . $cell_not_empty;
+
+
+                        if ($_POST[$cell_not_empty_next_id] == '') {
+
+                            $error_list['Table_1_row_' . $row_count] = 0;
+                            break;
+                        } else {
+
+                            $error_list['Table_1_row_' . $row_count] = 1;
+
+                        }
+                    }
+
+                } else {
+
+                    $error_list['Table_1_row_' . $row_count] = 0;
+
+                }
+
+                // Перевірка наступного рядка
+
+                $row_count--;
+
+                for ($cell_index = 1; $cell_index <= 15; $cell_index++) {
+
+                    $first_cell_id = 1 . '_' . $row_count . '_' . $cell_index;
+
+                    if ($_POST[$first_cell_id] == '') {
+
+                        $cell_index++;
+
+                        for ($cell_index; $cell_index <= 15; $cell_index++) {
+
+                            if ($cell_index % 4 == 0) {
+
+                                $cell_index++;
                             }
-                        } elseif ($first_cell_id[2] == 7) {
 
-                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 9;
-                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 10;
+                            $first_cell_id = 1 . '_' . $row_count . '_' . $cell_index;
 
-                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
-                                $error_list['line'] = 0;
+                            if ($_POST[$first_cell_id] != '') {
+                                $error_list['Table_1_row_' . $row_count] = 0;
+                                break 2;
                             }
-                        } elseif ($first_cell_id[2] == 9) {
 
-                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 10;
-                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 11;
+                        }
+                    }
+                }
+            } elseif ($row_count > 2) {
 
-                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
-                                $error_list['line'] = 0;
+                // Перевірка першого ряжка таблиці
+                $cell_index_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
+
+                for ($t = 0; $t < 12; $t++) {
+
+                    $first_cell_id = 1 . '_' . $row_count . '_' . array_shift($cell_index_1);
+
+                    // Знаходимо першу не пусту клітинку      1
+                    if ($_POST[$first_cell_id] != '') {
+
+                        $first_cell = $first_cell_id;
+                        $first_cell_id = explode('_', $first_cell);
+                        break;
+                    }
+                }
+
+                // Визначаємо ID наступної клітинки
+                if ($first_cell_id[2] == 15) {
+
+                    $error_list['Table_1_row_' . $row_count] = 1;
+
+                } else {
+                    $cell_not_empty = $first_cell_id[2] + 1;
+
+                    if ($cell_not_empty % 4 == 0) {
+
+                        $cell_not_empty++;
+                    }
+
+                    $cell_not_empty_id = 1 . '_' . $row_count . '_' . $cell_not_empty;
+
+                    // Перевіряємо чи наступна клітинка не пуста
+                    if ($_POST[$cell_not_empty_id] != '') {
+
+                        $cell_not_empty++;
+
+                        // Перевіряємо чи решта клітинок не пусті
+                        for ($cell_not_empty; $cell_not_empty <= 15; $cell_not_empty++) {
+
+                            if ($cell_not_empty % 4 == 0) {
+
+                                $cell_not_empty++;
                             }
-                        } elseif ($first_cell_id[2] == 10) {
 
-                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 11;
-                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 13;
-
-                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
-                                $error_list['line'] = 0;
-                            }
-                        } elseif ($first_cell_id[2] == 11) {
-
-                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 13;
-                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 14;
-                            $next_cell_id_3 = 1 . '_' . $row_count . '_' . 15;
+                            $cell_not_empty_next_id = 1 . '_' . $row_count . '_' . $cell_not_empty;
 
 
-                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '' or $_POST[$next_cell_id_3] == '') {
-                                $error_list['line'] = 0;
-                            }
-                        } elseif ($first_cell_id[2] == 13) {
+                            if ($_POST[$cell_not_empty_next_id] == '') {
 
-                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 14;
-                            $next_cell_id_2 = 1 . '_' . $row_count . '_' . 15;
+                                $error_list['Table_1_row_' . $row_count] = 0;
+                                break;
+                            } else {
 
-                            if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
-                                $error_list['line'] = 0;
-                            }
-                        } elseif ($first_cell_id[2] == 14) {
+                                $error_list['Table_1_row_' . $row_count] = 1;
 
-                            $next_cell_id_1 = 1 . '_' . $row_count . '_' . 15;
-                            $next_row_count = $row_count - 1;
-                            $next_cell_id_2 = 1 . '_' . $next_row_count . '_' . 1;
-
-                            if (!(empty($_POST[$next_cell_id_2]))) {
-                                if ($_POST[$next_cell_id_1] == '' && $_POST[$next_cell_id_2] != '') {
-                                    $error_list['line'] = 0;
-                                }
                             }
                         }
 
-                    }
+                    } else {
 
+                        $error_list['Table_1_row_' . $row_count] = 0;
+
+                    }
+                }
+
+
+                // Перевірка рядків між першим та отаннім рядком
+                $row_count--;
+
+                for ($row_count; $row_count >= 2; $row_count--) {
+
+                    for ($cell_index = 1; $cell_index <= 15; $cell_index++) {
+
+                        if ($cell_index % 4 == 0) {
+
+                            $cell_index++;
+                        }
+
+                        $first_cell_id = 1 . '_' . $row_count . '_' . $cell_index;
+
+                        if ($_POST[$first_cell_id] == '') {
+                            $error_list['Table_1_row_' . $row_count] = 0;
+                            break 2;
+                        }
+                    }
+                }
+
+
+                //Перевірка останнього рядка
+
+
+                for ($cell_index = 1; $cell_index <= 15; $cell_index++) {
+
+                    $first_cell_id = 1 . '_' . $row_count . '_' . $cell_index;
+
+                    if ($_POST[$first_cell_id] == '') {
+
+                        $cell_index++;
+
+                        for ($cell_index; $cell_index <= 15; $cell_index++) {
+
+                            if ($cell_index % 4 == 0) {
+
+                                $cell_index++;
+                            }
+
+                            $first_cell_id = 1 . '_' . $row_count . '_' . $cell_index;
+
+                            if ($_POST[$first_cell_id] != '') {
+                                $error_list['Table_1_row_' . $row_count] = 0;
+                                break 2;
+                            }
+
+                        }
+                    }
                 }
             }
 
 
-            // Валідація комірок
-//            for ($row_count; $row_count > 0; $row_count--) {
-//
-//                $cell_index_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
-//
-//                // Пошук та валідація в першому рядку таблиці клітинки із значеннями
-//                if (empty($cell_id)) {
-//
-//                    for ($t = 0; $t < 12; $t++) {
-//
-//                        $first_cell_id = 1 . '_' . $row_count . '_' . array_shift($cell_index_1);
-//                        if ($_POST[$first_cell_id] != '') {
-//
-//                            $first_cell_id = explode('_', $first_cell_id);
-//
-//                            for ($i = $first_cell_id[2]; $i < 16; $i++) {
-//                                if (!($i % 4 == 0)) {
-//                                    $first_cell_id = 1 . '_' . $row_count . '_' . $i;
-//                                    if ($_POST[$first_cell_id] != 0) {
-//                                        $index_is_cell = explode('_', $first_cell_id);
-//                                        if (in_array($index_is_cell[2], [5, 6, 7])) {
-//
-//                                            $cell_array[] = $index_is_cell[2] - 1;
-//
-//                                        } elseif (in_array($index_is_cell[2], [9, 10, 11])) {
-//
-//                                            $cell_array[] = (int)$index_is_cell[2] - 2;
-//
-//                                        } elseif (in_array($index_is_cell[2], [13, 14, 15])) {
-//
-//                                            $cell_array[] = (int)$index_is_cell[2] - 3;
-//
-//                                        } else {
-//
-//                                            $cell_array[] = (int)$index_is_cell[2];
-//
-//                                        }
-//                                    }
-//                                }
-//                            }
-//
-//                            $cell_array_count = count($cell_array);
-//                            if ($cell_array_count != 1) {
-//
-//                                $first_line_log = [];
-//                                $iterator = $cell_array[0];
-//
-//                                for ($i = 0; $i < count($cell_array); $i++) {
-//
-//                                    if ($cell_array[$i] == $iterator) {
-//                                        $first_line_log[] = 1;
-//                                    } else {
-//                                        $first_line_log[] = 0;
-//                                    }
-//                                    $iterator++;
-//                                }
-//
-//                                if (in_array(0, $first_line_log)) {
-//                                    $error_list['first_line'] = 0;
-//
-//                                } else {
-//                                    $error_list['first_line'] = 1;
-//                                }
-//                            } else {
-//                                $error_list['first_line'] = 1;
-//                            }
-//                        }
-//                        break;
-//                    }
-//                }
-//
-            // Валідація таблиць
+//             Валідація таблиць
+//             Вибираємо значення таблиці №1
 
-            // Валідація таблиць
-            // Вибираємо значення таблиці №1
-            $table_count = $form_state->get('table_number');
             $row_number = $form_state->get('row_number');
             if ($table_count > 1) {
-
 
 
                 $row_count_validate = $row_number['table_1'];
                 $pattern_table = [];
 
-                for ($f = 0; $f < $row_count_validate; $f++) {
+                for ($row_count_validate; $row_count_validate >= 1; $row_count_validate--) {
                     $cell_table_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
 
                     for ($t = 1; $t <= 12; $t++) {
@@ -500,46 +619,52 @@ class TableValid extends FormBase
 
                         }
                     }
+                }
 
-                    // Вибираємо значення наступних таблиці №1
+                // Вибираємо значення наступних таблиць
 
-                    $next_table = $table_count;
+                $next_table = $table_count;
 
-                    for ($next_table; $next_table > 1; $next_table--) {
-                        $next_table_number = 'table_' . $next_table;
-                        $next_row_count_validate = $row_number[$next_table_number];
+                for ($next_table; $next_table > 1; $next_table--) {
+                    $next_table_number = 'table_' . $next_table;
+                    $next_row_count_validate = $row_number[$next_table_number];
 
-                        ${'next_table_array' . $next_table} = [];
-                        $fix_next_table = $next_table - 1;
+                    $next_table_cell = [];
 
-                        for ($f = 0; $f < $next_row_count_validate; $f++) {
-                            $cell_table_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
 
-                            for ($t = 1; $t <= 12; $t++) {
-                                $cell_number = array_shift($cell_table_1);
-                                $number_cell = $next_table . '_' . $next_row_count_validate . '_' . $cell_number;
-                                if ($_POST[$number_cell] != '') {
-                                    $cell_index = $next_table - $fix_next_table . '_' . $next_row_count_validate . '_' . $cell_number;
+                    for ($next_row_count_validate; $next_row_count_validate >= 1; $next_row_count_validate--) {
+                        $cell_table_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
 
-                                    ${'next_table_array' . $next_table}[$cell_index] = $cell_index;
+                        for ($t = 1; $t <= 12; $t++) {
 
-                                }
-                            }
+                            $number_cell = $next_table . '_' . $next_row_count_validate . '_' . array_shift($cell_table_1);
+                            if ($_POST[$number_cell] != '') {
 
-                            if (count($pattern_table) < count(${'next_table_array' . $next_table})) {
-                                $result = array_diff_key(${'next_table_array' . $next_table}, $pattern_table);
-                            } else {
-                                $result = array_diff_key($pattern_table, ${'next_table_array' . $next_table});
-                            }
+                                $new_number_cell = explode('_', $number_cell);
+                                $new_number_table = $new_number_cell[0];
+                                $new_number_cell[0] = $new_number_table - $next_table + 1;
+                                $cell_index = $new_number_cell[0] . '_' . $new_number_cell[1] . '_' . $new_number_cell[2];
 
-                            if ($result) {
-                                $error_list['table_valid_' . $next_table . '_row_' . $f] = 0;
-                            } else {
-                                $error_list['table_valid_' . $next_table . '_row_' . $f] = 1;
+                                $next_table_cell[$cell_index] = $cell_index;
                             }
                         }
                     }
+
+                    if (count($pattern_table) < count($next_table_cell)) {
+                        $result = array_diff_key($next_table_cell, $pattern_table);
+                    } else {
+                        $result = array_diff_key($pattern_table, $next_table_cell);
+                    }
+
+                    if ($result) {
+                        $error_list['table_valid_' . $next_table . '_row_' . $next_row_count_validate] = 0;
+                        break;
+                    } else {
+                        $error_list['table_valid_' . $next_table . '_row_' . $next_row_count_validate] = 1;
+                    }
+
                 }
+
             }
 
             if (in_array(0, $error_list)) {
