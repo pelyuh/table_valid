@@ -2,7 +2,6 @@ custom:
   version: 1.0
   css:
     theme:
-      css/table_valid_css.css: {}
-
+      css/table_valid.css: {}
   js:
-    js/table_valid_js.js: {}
+    js/table_valid.js: {}
