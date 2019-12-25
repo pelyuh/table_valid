@@ -21,24 +21,9 @@ class TableValid extends FormBase {
    * @return array
    */
   private function table_head_name() {
-    $table_head_name = [
-      1 => 1,
-      2 => 2,
-      3 => 3,
-      4 => 4,
-      5 => 5,
-      6 => 6,
-      7 => 7,
-      8 => 8,
-      9 => 9,
-      10 => 10,
-      11 => 11,
-      12 => 12,
-      13 => 13,
-      14 => 14,
-      15 => 15,
-      16 => 16,
-    ];
+    for ($i = 1; $i <= 16; $i++) {
+      $table_head_name[$i] = $i;
+    }
     return $table_head_name;
   }
 
@@ -236,7 +221,7 @@ class TableValid extends FormBase {
       $quarter = $_POST[$pattern . ($id_cell_num - 1)] + $_POST[$pattern . ($id_cell_num - 2)] + $_POST[$pattern . ($id_cell_num++)];
     }
 
-    if ($quarter != 0 || $quarter != ''){
+    if ($quarter != 0 || $quarter != '') {
       $quarter = round(($quarter + 1) / 3, 2);
     }
 
@@ -260,8 +245,9 @@ class TableValid extends FormBase {
     }
 
 
+    if ($ytd_sum != 0 || $ytd_sum != '') {
       $ytd_sum = round(($ytd_sum + 1) / 4, 2);
-
+    }
 
     $sum = new AjaxResponse();
     $sum->addCommand(new InvokeCommand($id_quarter, 'val', [$quarter]));
