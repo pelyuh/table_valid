@@ -417,15 +417,14 @@ class TableValid extends FormBase {
    * {@inheritdoc}
    */
 
-  public
-  function submitForm(array &$form, FormStateInterface $form_state) {
-    // Перевіряємо чи була відправлена форма
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $messenger = \Drupal::messenger();
 
     if ($form_state->get('valid_result')) {
-      drupal_set_message($this->t('Valid!'));
+      $messenger->addMessage('Valid', $messenger::TYPE_STATUS);
     }
     else {
-      drupal_set_message($this->t('Invalid!'), 'error');
+      $messenger->addMessage('Invalid', $messenger::TYPE_ERROR);
     }
     $form_state->setRebuild();
   }
