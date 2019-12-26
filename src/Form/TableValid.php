@@ -225,7 +225,6 @@ class TableValid extends FormBase {
       $quarter = round(($quarter + 1) / 3, 2);
     }
 
-
     $id_quarter = '#' . $pattern . $id_cell_num;
 
     if ($id_cell_num = 4) {
@@ -243,7 +242,6 @@ class TableValid extends FormBase {
     ($id_cell_num = 16) {
       $ytd_sum = $_POST[$pattern . '4'] + $_POST[$pattern . '8'] + $_POST[$pattern . '12'] + $quarter;
     }
-
 
     if ($ytd_sum != 0 || $ytd_sum != '') {
       $ytd_sum = round(($ytd_sum + 1) / 4, 2);
@@ -269,13 +267,11 @@ class TableValid extends FormBase {
 
       // We get the number of rows in the tables
       $row_number = $form_state->get('row_number');
-
       $row_count = $row_number['table_1'];
 
-      $cell_index_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
-
-      // Знаходимо першу не пусту клітинку
+      // Find the first non-empty cell.
       for ($row_count; $row_count > 0; $row_count--) {
+        $cell_index_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
         for ($t = 0; $t < 12; $t++) {
           $first_cell_id = 1 . '_' . $row_count . '_' . array_shift($cell_index_1);
 
@@ -287,42 +283,38 @@ class TableValid extends FormBase {
         }
       }
 
-      // Шукаєммо першу пусту клітинку
-      $row_count = $row_number['table_1'];
+      // We are looking for the first blank cell.
+      $row_count = $first_cell_id[1];
       $cell_id = $first_cell_id[2];
 
       for ($row_count; $row_count > 0; $row_count--) {
         for ($cell_id; $cell_id < 16; $cell_id++) {
 
           if ($cell_id % 4 != 0) {
-
             $cell_not_empty_id = 1 . '_' . $row_count . '_' . $cell_id;
 
             if ($_POST[$cell_not_empty_id] == "") {
 
-              // Перевіряємо чи пуста перша клітинка наступного рядка
+              // Check whether the first cell of the next line is empty.
               if ($cell_id == 15) {
                 $row_count_next = $row_count - 1;
                 $cell_not_empty_id_next = 1 . '_' . $row_count_next . '_' . 1;
 
                 if (isset($_POST[$cell_not_empty_id_next])) {
-
                   if ($_POST[$cell_not_empty_id_next] != '') {
-                    //                    $form_state->set('valid_result', FALSE);
                     $error_list['table_1 ' . $row_count . $cell_id] = 0;
                     break 2;
                   }
                 }
               }
 
-              // Перевіряємо чи всі наступні клітинки пусті.
+              // Checks that all the following cells are empty.
               for ($cell_id; $cell_id < 16; $cell_id++) {
 
                 if ($cell_id % 4 != 0) {
                   $cell_not_empty_id = 1 . '_' . $row_count . '_' . $cell_id;
 
                   if ($_POST[$cell_not_empty_id] != "") {
-                    //                    $form_state->set('valid_result', FALSE);
                     $error_list['table_1 ' . $row_count . $cell_id] = 0;
                     break 3;
                   }
@@ -334,12 +326,12 @@ class TableValid extends FormBase {
         $cell_id = 1;
       }
 
-      //             Валідація таблиць
-      //             Вибираємо значення таблиці №1
-
+      /**
+       * Validation of tables.
+       * Chooses the value of table # 1.
+      */
       $row_number = $form_state->get('row_number');
       if ($table_count > 1) {
-
 
         $row_count_validate = $row_number['table_1'];
         $pattern_table = [];
@@ -348,39 +340,31 @@ class TableValid extends FormBase {
           $cell_table_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
 
           for ($t = 1; $t <= 12; $t++) {
-
             $number_cell = 1 . '_' . $row_count_validate . '_' . array_shift($cell_table_1);
             if ($_POST[$number_cell] != '') {
               $pattern_table[$number_cell] = $number_cell;
-
             }
           }
         }
 
-        // Вибираємо значення наступних таблиць
-
+        // We select the values of the following tables.
         $next_table = $table_count;
 
         for ($next_table; $next_table > 1; $next_table--) {
           $next_table_number = 'table_' . $next_table;
           $next_row_count_validate = $row_number[$next_table_number];
-
           $next_table_cell = [];
-
 
           for ($next_row_count_validate; $next_row_count_validate >= 1; $next_row_count_validate--) {
             $cell_table_1 = [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 14, 15];
 
             for ($t = 1; $t <= 12; $t++) {
-
               $number_cell = $next_table . '_' . $next_row_count_validate . '_' . array_shift($cell_table_1);
               if ($_POST[$number_cell] != '') {
-
                 $new_number_cell = explode('_', $number_cell);
                 $new_number_table = $new_number_cell[0];
                 $new_number_cell[0] = $new_number_table - $next_table + 1;
                 $cell_index = $new_number_cell[0] . '_' . $new_number_cell[1] . '_' . $new_number_cell[2];
-
                 $next_table_cell[$cell_index] = $cell_index;
               }
             }
@@ -412,11 +396,9 @@ class TableValid extends FormBase {
     }
   }
 
-
   /**
    * {@inheritdoc}
    */
-
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $messenger = \Drupal::messenger();
 
